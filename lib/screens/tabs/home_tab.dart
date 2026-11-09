@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/meal_provider.dart';
+import '../../widgets/app_info_card.dart';
+import '../app_info.dart';
 
 class HomeTab extends StatefulWidget {
   final Function(int) onTabChange; 
@@ -99,8 +101,22 @@ class _HomeTabState extends State<HomeTab> {
                 ],
               ),
             ),
-
-            
+            const SizedBox(height: 24),
+            InfoShowcaseCard(
+              nama: widget.nama,
+              nim: widget.nim,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AppInfoScreen(
+                      nama: widget.nama,
+                      nim: widget.nim,
+                    ),
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),
