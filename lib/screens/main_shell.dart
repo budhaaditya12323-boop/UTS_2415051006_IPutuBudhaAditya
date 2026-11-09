@@ -24,7 +24,15 @@ class _MainShellState extends State<MainShell> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = [
-      HomeTab(),
+      HomeTab(
+        nama: widget.nama, 
+        nim: widget.nim,
+        onTabChange: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+      ),
       MealsTab(),
       FavoritesTab(),
       ProfileTab(nama: widget.nama, nim: widget.nim,),

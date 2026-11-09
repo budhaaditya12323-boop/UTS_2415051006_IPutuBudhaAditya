@@ -27,6 +27,7 @@ class MealProvider extends ChangeNotifier {
     Future<void> searchMeals(String query) async {
     _isLoading = true;
     _error = null;
+    _isLoading = true;
     notifyListeners(); 
 
     try {
