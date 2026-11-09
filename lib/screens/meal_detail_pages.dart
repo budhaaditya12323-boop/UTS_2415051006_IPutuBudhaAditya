@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/meal.dart';
+import '../models/saved_recepies.dart';
+import 'package:provider/provider.dart';
+import '../providers/meal_provider.dart'; 
 
 class DetailScreen extends StatelessWidget {
   final Meal meal; 
@@ -72,6 +75,36 @@ class DetailScreen extends StatelessWidget {
                   Text(
                     meal.instructions,
                     style: const TextStyle(height: 1.5),
+                  ),
+                  // TOMBOL SIMPAN (CREATE)
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      onPressed: () async {
+                        final saved = SavedRecipe(
+                          mealId: meal.id,
+                          title: meal.title,
+                          imageUrl: meal.imageUrl,
+                          note: 'Belum ada catatan',
+                        );
+                        
+                        await context.read<MealProvider>().saveRecipe(saved);
+                        
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Berhasil disimpan ke Favorit!')),
+                          );
+                          Navigator.pop(context);
+                        }
+                      },
+                      icon: const Icon(Icons.favorite),
+                      label: const Text('Simpan ke Favorit', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    ),
                   ),
                 ],
               ),

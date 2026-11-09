@@ -31,7 +31,7 @@ class _MealsTabState extends State<MealsTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cari Resep'),
+        title: const Text('Cari Resep Internet'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
       ),
@@ -43,7 +43,7 @@ class _MealsTabState extends State<MealsTab> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Cari resep (misal: Chicken)',
+                hintText: 'Cari resep di Internet (misal: Chicken)',
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),

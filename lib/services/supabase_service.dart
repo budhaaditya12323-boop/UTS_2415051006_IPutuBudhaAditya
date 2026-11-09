@@ -14,4 +14,7 @@ class SupabaseService {
         .map((json) => SavedRecipe.fromJson(json))
         .toList();
   }
+  Future<void> addSavedRecipe(SavedRecipe recipe) async {
+    await supabase.from('saved_recipes').insert(recipe.toJson());
+  }
 }
