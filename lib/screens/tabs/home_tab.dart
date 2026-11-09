@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../providers/meal_provider.dart';
 import '../../widgets/app_info_card.dart';
 import '../app_info.dart';
+import '../../widgets/steak_showcase_card.dart';
 
 class HomeTab extends StatefulWidget {
   final Function(int) onTabChange; 
@@ -21,7 +22,11 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
-  
+  final List<String> _steakImages = [
+    'assets/images/steak1.jpg',
+    'assets/images/steak2.jpg',
+    'assets/images/steak3.jpg',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +105,23 @@ class _HomeTabState extends State<HomeTab> {
                   ),
                 ],
               ),
+            ),
+            const SizedBox(height: 24),
+            Text( 
+              'Selamat Datang ${widget.nama}!',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade800,
+              ),
+            ),
+            const SizedBox(height: 24),
+            SteakShowcaseCard(
+              steakImages: _steakImages,
+              onTap: () {
+                context.read<MealProvider>().searchMeals('steak');
+                widget.onTabChange(1); 
+              },
             ),
             const SizedBox(height: 24),
             InfoShowcaseCard(
