@@ -5,6 +5,7 @@ import '../../widgets/saved_recipe_card.dart';
 import '../meal_detail_pages.dart';
 import '../../models/meal.dart';
 import '../edit_note_screen.dart';
+import '../../widgets/error_view.dart';
 
 class FavoritesTab extends StatelessWidget {
   const FavoritesTab({super.key});
@@ -24,8 +25,16 @@ class FavoritesTab extends StatelessWidget {
           if (provider.isDbLoading) {
             return const Center(child: CircularProgressIndicator());
           }
+          if (provider.dbError != null) {
+            return ErrorView(
+              message: provider.dbError!,
+              onRetry: () => provider.loadSavedRecipes(), 
+            );
+          }
           if (provider.savedRecipes.isEmpty) {
-            return const Center(child: Text('Belum ada resep favorit.'));
+            return const ErrorView(
+              message: 'Belum ada resep favorit.\nAyo simpan resep pertamamu!',
+            );
           }
 
           return ListView.builder(

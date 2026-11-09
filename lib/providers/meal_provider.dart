@@ -16,15 +16,20 @@ class MealProvider extends ChangeNotifier {
   List<Meal> _meals = [];
   bool _isLoading = false;
   String? _error;
+
   List<Meal> get meals => _meals;
   bool get isLoading => _isLoading;
   String? get error => _error;
+  
 
   // === STATE DATABASE ===
   List<SavedRecipe> _savedRecipes = [];
   bool _isDbLoading = false;
+  String? _dbError; 
+
   List<SavedRecipe> get savedRecipes => _savedRecipes;
   bool get isDbLoading => _isDbLoading;
+  String? get dbError => _dbError; 
 
   // === STATE CHECKING (Cek Duplikat) ===
   bool _isChecking = false;
@@ -32,37 +37,22 @@ class MealProvider extends ChangeNotifier {
 
   // ─── FUNGSI API ───
 
+  String _searchQuery = 'Beef';
+  String get searchQuery => _searchQuery;
+
   Future<void> searchMeals(String query) async {
     _isLoading = true;
     _error = null;
+    _searchQuery = query;
     notifyListeners(); 
 
     try {
-      _meals = await _mealRepo.searchMeals(query); // Panggil Repo
+      _meals = await _mealRepo.searchMeals(query);
     } catch (e) {
       _error = e.toString().replaceAll('Exception: ', '');
     } finally {
       _isLoading = false;
       notifyListeners(); 
-    }
-  }
-
-  Future<void> loadRandomMeals() async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-
-    try {
-      final m1 = await _mealRepo.getRandomMeals(); // Panggil Repo
-      final m2 = await _mealRepo.getRandomMeals();
-      final m3 = await _mealRepo.getRandomMeals();
-      
-      _meals = [...m1, ...m2, ...m3]; 
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-    } finally {
-      _isLoading = false;
-      notifyListeners();
     }
   }
 
@@ -87,11 +77,12 @@ class MealProvider extends ChangeNotifier {
 
   Future<void> loadSavedRecipes() async {
     _isDbLoading = true;
+    _dbError = null; // Reset error
     notifyListeners();
     try {
-      _savedRecipes = await _recipeRepo.getSavedRecipes(); // Panggil Repo
+      _savedRecipes = await _recipeRepo.getSavedRecipes();
     } catch (e) {
-      _error = e.toString();
+      _dbError = e.toString().replaceAll('Exception: ', '');
     } finally {
       _isDbLoading = false;
       notifyListeners();

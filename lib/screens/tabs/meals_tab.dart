@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/meal_provider.dart';
 import '../../widgets/meal_card.dart';
+import '../../widgets/error_view.dart';
 
 class MealsTab extends StatefulWidget {
   const MealsTab({super.key});
@@ -66,10 +67,16 @@ class _MealsTabState extends State<MealsTab> {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (provider.error != null) {
-                  return Center(child: Text('Error: ${provider.error}'));
+                  return ErrorView(
+                    message: provider.error!,
+                    onRetry: () => provider.searchMeals(provider.searchQuery), 
+                  );
                 }
                 if (provider.meals.isEmpty) {
-                  return const Center(child: Text('Resep tidak ditemukan.'));
+                  return const ErrorView(
+                    message: 'Resep tidak ditemukan.\nCoba kata kunci lain.',
+                    onRetry: null, 
+                  );
                 }
 
                 return LayoutBuilder(
