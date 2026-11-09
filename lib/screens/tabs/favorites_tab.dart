@@ -10,7 +10,9 @@ class FavoritesTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Favorit Saya'),
+        title: const Text('Favorit Saya',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
       ),
