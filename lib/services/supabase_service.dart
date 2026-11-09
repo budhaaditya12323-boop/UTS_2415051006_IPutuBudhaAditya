@@ -17,4 +17,10 @@ class SupabaseService {
   Future<void> addSavedRecipe(SavedRecipe recipe) async {
     await supabase.from('saved_recipes').insert(recipe.toJson());
   }
+  Future<void> updateSavedRecipe(int id, String newNote) async {
+    await supabase
+        .from('saved_recipes')
+        .update({'note': newNote})
+        .eq('id', id);
+  }
 }

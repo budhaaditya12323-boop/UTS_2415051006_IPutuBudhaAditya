@@ -73,4 +73,8 @@ class MealProvider extends ChangeNotifier {
     await _dbService.addSavedRecipe(recipe);
     await loadSavedRecipes(); 
   }
+  Future<void> updateNote(int id, String newNote) async {
+    await _dbService.updateSavedRecipe(id, newNote);
+    await loadSavedRecipes(); 
+  }
 }

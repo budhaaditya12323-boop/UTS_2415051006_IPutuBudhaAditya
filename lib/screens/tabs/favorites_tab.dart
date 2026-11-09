@@ -38,6 +38,23 @@ class FavoritesTab extends StatelessWidget {
                   ),
                   title: Text(recipe.title, style: const TextStyle(fontWeight: FontWeight.bold)),
                   subtitle: Text(recipe.note, maxLines: 2, overflow: TextOverflow.ellipsis),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // TOMBOL EDIT (UPDATE)
+                      IconButton(
+                        icon: const Icon(Icons.edit, color: Colors.blue),
+                        onPressed: () => _showEditDialog(context, provider, recipe.id!, recipe.note),
+                      ),
+                      // TOMBOL HAPUS (DELETE)
+                      // IconButton(
+                      //   icon: const Icon(Icons.delete, color: Colors.red),
+                      //   onPressed: () => _showDeleteDialog(context, provider, recipe.id!),
+                      // ),
+                    ],
+                  ),
+
+                  
                 ),
               );
             },
@@ -46,4 +63,35 @@ class FavoritesTab extends StatelessWidget {
       ),
     );
   }
+  void _showEditDialog(BuildContext context, MealProvider provider, int id, String currentNote) {
+    final controller = TextEditingController(text: currentNote);
+    
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Edit Catatan'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+            hintText: 'Tulis catatan resep...',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx), 
+            child: const Text('Batal')
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await provider.updateNote(id, controller.text);
+              if (ctx.mounted) Navigator.pop(ctx);
+            },
+            child: const Text('Simpan'),
+          ),
+        ],
+      ),
+    );
+  }
+
 }
