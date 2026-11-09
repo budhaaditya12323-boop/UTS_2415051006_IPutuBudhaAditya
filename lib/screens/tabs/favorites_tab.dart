@@ -4,6 +4,7 @@ import '../../providers/meal_provider.dart';
 import '../../widgets/saved_recipe_card.dart';
 import '../meal_detail_pages.dart';
 import '../../models/meal.dart';
+import '../edit_note_screen.dart';
 
 class FavoritesTab extends StatelessWidget {
   const FavoritesTab({super.key});
@@ -34,7 +35,17 @@ class FavoritesTab extends StatelessWidget {
               final recipe = provider.savedRecipes[index];
               return SavedRecipeCard(
                 recipe: recipe,
-                onEdit: () => _showEditDialog(context, provider, recipe.id!, recipe.note),
+                onEdit: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditNoteScreen(
+                        id: recipe.id!,
+                        currentNote: recipe.note,
+                      ),
+                    ),
+                  );
+                },
                 onDelete: () => _showDeleteDialog(context, provider, recipe.id!),
                 onTap: () async {
                   showDialog(
@@ -60,43 +71,13 @@ class FavoritesTab extends StatelessWidget {
                   }
                 },
               );
+              
             },
           );
         },
       ),
     );
   }
-  void _showEditDialog(BuildContext context, MealProvider provider, int id, String currentNote) {
-    final controller = TextEditingController(text: currentNote);
-    
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Edit Catatan'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            hintText: 'Tulis catatan resep...',
-            border: OutlineInputBorder(),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx), 
-            child: const Text('Batal')
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              await provider.updateNote(id, controller.text);
-              if (ctx.mounted) Navigator.pop(ctx);
-            },
-            child: const Text('Simpan'),
-          ),
-        ],
-      ),
-    );
-  }
-  // FUNGSI DELETE (Dialog Konfirmasi Hapus)
   void _showDeleteDialog(BuildContext context, MealProvider provider, int id) {
     showDialog(
       context: context,
