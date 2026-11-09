@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart'; // Import provider
+import 'package:recepies_io/providers/meal_provider.dart'; // Import provider
 import 'package:recepies_io/screens/main_shell.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    // Bungkus aplikasi dengan Provider
+    ChangeNotifierProvider(
+      create: (_) => MealProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -11,11 +19,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Recepies',
+      title: 'ResepKita',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        colorSchemeSeed: const Color.fromARGB(255, 238, 153, 24),
+        colorSchemeSeed: Colors.orange,
       ),
       home: const MainShell(
         nama: "I Putu Budha Aditya",
