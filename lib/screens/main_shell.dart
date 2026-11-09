@@ -32,7 +32,7 @@ class _MainShellState extends State<MainShell> {
 
     return LayoutBuilder(                          
       builder: (context, constraints) {
-        if (constraints.maxWidth < 840) {
+        if (constraints.maxWidth < 800) {
           return Scaffold(
             body: pages[_currentIndex],            
             bottomNavigationBar: NavigationBar(

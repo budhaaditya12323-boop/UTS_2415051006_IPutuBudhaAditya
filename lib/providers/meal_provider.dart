@@ -22,6 +22,21 @@ class MealProvider extends ChangeNotifier {
   List<SavedRecipe> get savedRecipes => _savedRecipes;
   bool get isDbLoading => _isDbLoading;
 
+    Future<void> searchMeals(String query) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners(); 
+
+    try {
+      _meals = await _apiService.searchMeals(query);
+    } catch (e) {
+      _error = e.toString().replaceAll('Exception: ', '');
+    } finally {
+      _isLoading = false;
+      notifyListeners(); 
+    }
+  }
+
     Future<void> loadRandomMeals() async {
     _isLoading = true;
     _error = null;
