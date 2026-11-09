@@ -9,6 +9,72 @@ class DetailScreen extends StatelessWidget {
 
   const DetailScreen({super.key, required this.meal});
 
+  void _showSaveDialog(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
+    final noteController = TextEditingController();
+    final provider = context.read<MealProvider>();
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Simpan ke Favorit'),
+        content: Form(
+          key: formKey,
+          child: TextFormField(
+            controller: noteController,
+            maxLines: 3,
+            decoration: const InputDecoration(
+              labelText: 'Catatan Memasak (Opsional)',
+              hintText: 'Contoh: Kurangi gula, tambahkan cabai...',
+              border: OutlineInputBorder(),
+            ),
+            validator: (value) {
+              if (value != null && value.isNotEmpty && value.length < 5) {
+                return 'Catatan minimal 5 karakter';
+              }
+              return null;
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Batal'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (formKey.currentState!.validate()) {
+                Navigator.pop(ctx); 
+
+                final saved = SavedRecipe(
+                  mealId: meal.id,
+                  title: meal.title,
+                  imageUrl: meal.imageUrl,
+                  note: noteController.text.isEmpty ? 'Tidak ada catatan' : noteController.text,
+                );
+
+                final resultMessage = await provider.saveRecipe(saved);
+
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(resultMessage),
+                      backgroundColor: resultMessage.contains('Berhasil') ? Colors.green : Colors.orange,
+                    ),
+                  );
+                  if (resultMessage.contains('Berhasil')) {
+                    Navigator.pop(context);
+                  }
+                }
+              }
+            },
+            child: const Text('Simpan'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,38 +155,41 @@ class DetailScreen extends StatelessWidget {
                           );
                         }
 
-                        return ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orange,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                          ),
-                          onPressed: () async {
-                            final saved = SavedRecipe(
-                              mealId: meal.id,
-                              title: meal.title,
-                              imageUrl: meal.imageUrl,
-                              note: 'Belum ada catatan',
-                            );
-                            
-                            final String resultMessage = await context.read<MealProvider>().saveRecipe(saved);
-                            
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(resultMessage),
-                                  // Jika sukses (mengandung kata Berhasil), warna hijau. Jika sudah ada, warna orange.
-                                  backgroundColor: resultMessage.contains('Berhasil') ? Colors.green : Colors.orange,
-                                ),
+                        return SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            onPressed: () async {
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (_) => const Center(child: CircularProgressIndicator()),
                               );
-                              
-                              if (resultMessage.contains('Berhasil')) {
-                                Navigator.pop(context);
+                              final bool exists = await context.read<MealProvider>().checkIfRecipeSaved(meal.id);
+                              if (context.mounted) Navigator.pop(context);
+
+                              if (exists) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Resep ini sudah ada di daftar Favoritmu!'),
+                                      backgroundColor: Colors.orange,
+                                    ),
+                                  );
+                                }
+                              } else {
+                                if (context.mounted) {
+                                  _showSaveDialog(context);
+                                }
                               }
-                            }
-                          },
-                          icon: const Icon(Icons.favorite),
-                          label: const Text('Simpan ke Favorit', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                            },
+                            icon: const Icon(Icons.favorite),
+                            label: const Text('Simpan ke Favorit', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          ),
                         );
                       },
                     ),

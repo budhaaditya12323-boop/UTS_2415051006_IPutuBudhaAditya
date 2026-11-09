@@ -131,4 +131,11 @@ class MealProvider extends ChangeNotifier {
     await _recipeRepo.deleteSavedRecipe(id); // Panggil Repo
     await loadSavedRecipes(); 
   }
+  Future<bool> checkIfRecipeSaved(String mealId) async {
+    try {
+      return await _recipeRepo.isRecipeSaved(mealId); // Memanggil repository
+    } catch (e) {
+      return false;
+    }
+  }
 }
