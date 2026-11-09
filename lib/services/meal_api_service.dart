@@ -38,4 +38,25 @@ class MealApiService {
       throw Exception('Error: $e');
     }
   }
+
+  Future<Meal> getMealById(String id) async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/lookup.php?i=$id'));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['meals'] == null) {
+          throw Exception('Resep tidak ditemukan di server');
+        }
+        
+        // API mengembalikan List, ambil index pertama
+        final List<dynamic> list = data['meals'];
+        return Meal.fromJson(list[0]);
+      } else {
+        throw Exception('Gagal terhubung ke server');
+      }
+    } catch (e) {
+      throw Exception('Error: $e');
+    }
+  }
 }

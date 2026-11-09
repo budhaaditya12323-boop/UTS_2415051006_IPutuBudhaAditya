@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/meal_provider.dart';
 import '../../widgets/saved_recipe_card.dart';
+import '../meal_detail_pages.dart';
+import '../../models/meal.dart';
 
 class FavoritesTab extends StatelessWidget {
   const FavoritesTab({super.key});
@@ -30,12 +32,33 @@ class FavoritesTab extends StatelessWidget {
             itemCount: provider.savedRecipes.length,
             itemBuilder: (context, index) {
               final recipe = provider.savedRecipes[index];
-              
-              // ─── GUNAKAN WIDGET BARU DI SINI ───
               return SavedRecipeCard(
                 recipe: recipe,
                 onEdit: () => _showEditDialog(context, provider, recipe.id!, recipe.note),
                 onDelete: () => _showDeleteDialog(context, provider, recipe.id!),
+                onTap: () async {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (_) => const Center(child: CircularProgressIndicator()),
+                  );
+
+                  final Meal? fullMeal = await provider.fetchMealForDetail(recipe.mealId);
+                  if (context.mounted) Navigator.pop(context); 
+
+                  if (fullMeal != null && context.mounted) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DetailScreen(meal: fullMeal),
+                      ),
+                    );
+                  } else if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(provider.error ?? 'Gagal membuka resep')),
+                    );
+                  }
+                },
               );
             },
           );

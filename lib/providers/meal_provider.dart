@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import '../models/meal.dart';
-import '../services/meal_api_service.dart';
 import '../models/saved_recipe.dart';
-import '../services/supabase_service.dart';
+import '../repositories/meal_repository.dart';
+import '../repositories/saved_recipe_repository.dart';
 
 class MealProvider extends ChangeNotifier {
-  final MealApiService _apiService = MealApiService();
-  final SupabaseService _dbService = SupabaseService();
-  bool _isChecking = false;
-  bool get isChecking => _isChecking;
+  // ─── GUNAKAN REPOSITORY ───
+  final MealRepository _mealRepo;
+  final SavedRecipeRepository _recipeRepo;
+
+  // Constructor menerima Repository dari main.dart
+  MealProvider(this._mealRepo, this._recipeRepo);
 
   // === STATE API ===
   List<Meal> _meals = [];
@@ -24,14 +26,19 @@ class MealProvider extends ChangeNotifier {
   List<SavedRecipe> get savedRecipes => _savedRecipes;
   bool get isDbLoading => _isDbLoading;
 
-    Future<void> searchMeals(String query) async {
+  // === STATE CHECKING (Cek Duplikat) ===
+  bool _isChecking = false;
+  bool get isChecking => _isChecking;
+
+  // ─── FUNGSI API ───
+
+  Future<void> searchMeals(String query) async {
     _isLoading = true;
     _error = null;
-    _isLoading = true;
     notifyListeners(); 
 
     try {
-      _meals = await _apiService.searchMeals(query);
+      _meals = await _mealRepo.searchMeals(query); // Panggil Repo
     } catch (e) {
       _error = e.toString().replaceAll('Exception: ', '');
     } finally {
@@ -40,15 +47,15 @@ class MealProvider extends ChangeNotifier {
     }
   }
 
-    Future<void> loadRandomMeals() async {
+  Future<void> loadRandomMeals() async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      final m1 = await _apiService.getRandomMeals();
-      final m2 = await _apiService.getRandomMeals();
-      final m3 = await _apiService.getRandomMeals();
+      final m1 = await _mealRepo.getRandomMeals(); // Panggil Repo
+      final m2 = await _mealRepo.getRandomMeals();
+      final m3 = await _mealRepo.getRandomMeals();
       
       _meals = [...m1, ...m2, ...m3]; 
     } catch (e) {
@@ -59,11 +66,30 @@ class MealProvider extends ChangeNotifier {
     }
   }
 
+  Future<Meal?> fetchMealForDetail(String id) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final meal = await _mealRepo.getMealById(id); // Panggil Repo
+      return meal;
+    } catch (e) {
+      _error = e.toString().replaceAll('Exception: ', '');
+      return null;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // ─── FUNGSI DATABASE ───
+
   Future<void> loadSavedRecipes() async {
     _isDbLoading = true;
     notifyListeners();
     try {
-      _savedRecipes = await _dbService.getSavedRecipes();
+      _savedRecipes = await _recipeRepo.getSavedRecipes(); // Panggil Repo
     } catch (e) {
       _error = e.toString();
     } finally {
@@ -73,17 +99,17 @@ class MealProvider extends ChangeNotifier {
   }
 
   Future<String> saveRecipe(SavedRecipe recipe) async {
-   _isChecking = true;
+    _isChecking = true;
     notifyListeners();
 
     try {
-      final bool exists = await _dbService.isRecipeSaved(recipe.mealId);
+      final bool exists = await _recipeRepo.isRecipeSaved(recipe.mealId); // Panggil Repo
 
       if (exists) {
         return 'Resep ini sudah ada di daftar Favorit!';
       }
 
-      await _dbService.addSavedRecipe(recipe);
+      await _recipeRepo.addSavedRecipe(recipe); // Panggil Repo
       await loadSavedRecipes();
       
       return 'Berhasil disimpan ke Favorit!';
@@ -95,12 +121,14 @@ class MealProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   Future<void> updateNote(int id, String newNote) async {
-    await _dbService.updateSavedRecipe(id, newNote);
+    await _recipeRepo.updateSavedRecipe(id, newNote); // Panggil Repo
     await loadSavedRecipes(); 
   }
+
   Future<void> deleteRecipe(int id) async {
-    await _dbService.deleteSavedRecipe(id);
+    await _recipeRepo.deleteSavedRecipe(id); // Panggil Repo
     await loadSavedRecipes(); 
   }
 }
