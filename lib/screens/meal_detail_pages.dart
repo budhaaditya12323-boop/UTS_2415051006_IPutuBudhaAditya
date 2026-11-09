@@ -76,34 +76,51 @@ class DetailScreen extends StatelessWidget {
                     meal.instructions,
                     style: const TextStyle(height: 1.5),
                   ),
-                  // TOMBOL SIMPAN (CREATE)
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      onPressed: () async {
-                        final saved = SavedRecipe(
-                          mealId: meal.id,
-                          title: meal.title,
-                          imageUrl: meal.imageUrl,
-                          note: 'Belum ada catatan',
-                        );
-                        
-                        await context.read<MealProvider>().saveRecipe(saved);
-                        
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Berhasil disimpan ke Favorit!')),
+                    child: Consumer<MealProvider>(
+                      builder: (context, provider, child) {
+                        if (provider.isChecking) {
+                          return const ElevatedButton(
+                            onPressed: null,
+                            child: CircularProgressIndicator(),
                           );
-                          Navigator.pop(context);
                         }
+
+                        return ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+                          onPressed: () async {
+                            final saved = SavedRecipe(
+                              mealId: meal.id,
+                              title: meal.title,
+                              imageUrl: meal.imageUrl,
+                              note: 'Belum ada catatan',
+                            );
+                            
+                            final String resultMessage = await context.read<MealProvider>().saveRecipe(saved);
+                            
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(resultMessage),
+                                  // Jika sukses (mengandung kata Berhasil), warna hijau. Jika sudah ada, warna orange.
+                                  backgroundColor: resultMessage.contains('Berhasil') ? Colors.green : Colors.orange,
+                                ),
+                              );
+                              
+                              if (resultMessage.contains('Berhasil')) {
+                                Navigator.pop(context);
+                              }
+                            }
+                          },
+                          icon: const Icon(Icons.favorite),
+                          label: const Text('Simpan ke Favorit', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        );
                       },
-                      icon: const Icon(Icons.favorite),
-                      label: const Text('Simpan ke Favorit', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
                   ),
                 ],

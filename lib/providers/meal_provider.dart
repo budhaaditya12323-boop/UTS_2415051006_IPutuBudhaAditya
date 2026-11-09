@@ -7,6 +7,8 @@ import '../services/supabase_service.dart';
 class MealProvider extends ChangeNotifier {
   final MealApiService _apiService = MealApiService();
   final SupabaseService _dbService = SupabaseService();
+  bool _isChecking = false;
+  bool get isChecking => _isChecking;
 
   // === STATE API ===
   List<Meal> _meals = [];
@@ -69,12 +71,35 @@ class MealProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> saveRecipe(SavedRecipe recipe) async {
-    await _dbService.addSavedRecipe(recipe);
-    await loadSavedRecipes(); 
+  Future<String> saveRecipe(SavedRecipe recipe) async {
+   _isChecking = true;
+    notifyListeners();
+
+    try {
+      final bool exists = await _dbService.isRecipeSaved(recipe.mealId);
+
+      if (exists) {
+        return 'Resep ini sudah ada di daftar Favorit!';
+      }
+
+      await _dbService.addSavedRecipe(recipe);
+      await loadSavedRecipes();
+      
+      return 'Berhasil disimpan ke Favorit!';
+      
+    } catch (e) {
+      return 'Terjadi kesalahan: ${e.toString()}';
+    } finally {
+      _isChecking = false;
+      notifyListeners();
+    }
   }
   Future<void> updateNote(int id, String newNote) async {
     await _dbService.updateSavedRecipe(id, newNote);
+    await loadSavedRecipes(); 
+  }
+  Future<void> deleteRecipe(int id) async {
+    await _dbService.deleteSavedRecipe(id);
     await loadSavedRecipes(); 
   }
 }

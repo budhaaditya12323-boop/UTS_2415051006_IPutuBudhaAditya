@@ -46,11 +46,11 @@ class FavoritesTab extends StatelessWidget {
                         icon: const Icon(Icons.edit, color: Colors.blue),
                         onPressed: () => _showEditDialog(context, provider, recipe.id!, recipe.note),
                       ),
-                      // TOMBOL HAPUS (DELETE)
-                      // IconButton(
-                      //   icon: const Icon(Icons.delete, color: Colors.red),
-                      //   onPressed: () => _showDeleteDialog(context, provider, recipe.id!),
-                      // ),
+                      //TOMBOL HAPUS (DELETE)
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => _showDeleteDialog(context, provider, recipe.id!),
+                      ),
                     ],
                   ),
 
@@ -88,6 +88,30 @@ class FavoritesTab extends StatelessWidget {
               if (ctx.mounted) Navigator.pop(ctx);
             },
             child: const Text('Simpan'),
+          ),
+        ],
+      ),
+    );
+  }
+  // FUNGSI DELETE (Dialog Konfirmasi Hapus)
+  void _showDeleteDialog(BuildContext context, MealProvider provider, int id) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Hapus Favorit?'),
+        content: const Text('Resep ini akan dihapus dari daftar favoritmu.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx), 
+            child: const Text('Batal')
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () async {
+              await provider.deleteRecipe(id);
+              if (ctx.mounted) Navigator.pop(ctx);
+            },
+            child: const Text('Hapus', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),

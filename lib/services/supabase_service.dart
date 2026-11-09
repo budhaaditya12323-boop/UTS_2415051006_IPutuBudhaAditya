@@ -23,4 +23,14 @@ class SupabaseService {
         .update({'note': newNote})
         .eq('id', id);
   }
+  Future<void> deleteSavedRecipe(int id) async {
+    await supabase.from('saved_recipes').delete().eq('id', id);
+  }
+  Future<bool> isRecipeSaved(String mealId) async {
+    final response = await supabase
+        .from('saved_recipes')
+        .select()
+        .eq('meal_id', mealId);
+    return (response as List).isNotEmpty;
+  }
 }
