@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/meal.dart';
 import '../services/meal_api_service.dart';
-import '../models/saved_recepies.dart';
+import '../models/saved_recipe.dart';
 import '../services/supabase_service.dart';
 
 class MealProvider extends ChangeNotifier {

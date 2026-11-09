@@ -31,7 +31,9 @@ class _MealsTabState extends State<MealsTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cari Resep Internet'),
+        title: const Text('Cari Resep Internet',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
       ),

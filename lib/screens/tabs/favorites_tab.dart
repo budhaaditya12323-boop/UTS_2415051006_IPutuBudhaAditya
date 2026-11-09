@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/meal_provider.dart';
+import '../../widgets/saved_recipe_card.dart';
 
 class FavoritesTab extends StatelessWidget {
   const FavoritesTab({super.key});
@@ -28,34 +29,11 @@ class FavoritesTab extends StatelessWidget {
             itemBuilder: (context, index) {
               final recipe = provider.savedRecipes[index];
               
-              return Card(
-                margin: const EdgeInsets.only(bottom: 12),
-                child: ListTile(
-                  contentPadding: const EdgeInsets.all(8),
-                  leading: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.network(recipe.imageUrl, width: 70, height: 70, fit: BoxFit.cover),
-                  ),
-                  title: Text(recipe.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text(recipe.note, maxLines: 2, overflow: TextOverflow.ellipsis),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // TOMBOL EDIT (UPDATE)
-                      IconButton(
-                        icon: const Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () => _showEditDialog(context, provider, recipe.id!, recipe.note),
-                      ),
-                      //TOMBOL HAPUS (DELETE)
-                      IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () => _showDeleteDialog(context, provider, recipe.id!),
-                      ),
-                    ],
-                  ),
-
-                  
-                ),
+              // ─── GUNAKAN WIDGET BARU DI SINI ───
+              return SavedRecipeCard(
+                recipe: recipe,
+                onEdit: () => _showEditDialog(context, provider, recipe.id!, recipe.note),
+                onDelete: () => _showDeleteDialog(context, provider, recipe.id!),
               );
             },
           );
