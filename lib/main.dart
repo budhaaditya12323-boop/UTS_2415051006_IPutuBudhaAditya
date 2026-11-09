@@ -2,12 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // Import provider
 import 'package:recepies_io/providers/meal_provider.dart'; // Import provider
 import 'package:recepies_io/screens/main_shell.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+Future <void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: 'https://ofejigiqdluytosikivj.supabase.co',
+    publishableKey: 'sb_publishable_4WV1JMDVrC6jcvO-EsanXw_sqUXNvyY',
+  );
+
   runApp(
     // Bungkus aplikasi dengan Provider
     ChangeNotifierProvider(
-      create: (_) => MealProvider(),
+      create: (_) => MealProvider()..loadSavedRecipes(),
       child: const MyApp(),
     ),
   );
