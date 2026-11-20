@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "925788479070",
+    "project_id": "uts-mobile-2415051006-a80fd",
+    "storage_bucket": "uts-mobile-2415051006-a80fd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:925788479070:android:66b1d29546aff7e226decf",
+        "android_client_info": {
+          "package_name": "com.example.recepies_io"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNoEN53RFMeNfWG7Mi4GD4sUcYFNrpUaE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
