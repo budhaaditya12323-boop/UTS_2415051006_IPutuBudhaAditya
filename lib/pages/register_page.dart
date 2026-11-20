@@ -16,7 +16,11 @@ class _RegisterPageState extends State<RegisterPage> {
   final _emailC = TextEditingController();
   final _passC = TextEditingController();
   final _confirmC = TextEditingController();
-  bool _loading = false;
+  bool _loading = false; 
+  // state:
+  final _nameC = TextEditingController();
+  String _role = 'seeker';
+
 
   @override
   void dispose() {
@@ -38,6 +42,8 @@ class _RegisterPageState extends State<RegisterPage> {
       final res = await AuthService.instance.register(
         email: _emailC.text.trim(),
         password: _passC.text,
+        name: _nameC.text.trim(),
+        role: _role,
       );
       if (!mounted) return;
 
@@ -71,6 +77,23 @@ class _RegisterPageState extends State<RegisterPage> {
           key: _formKey,
           child: ListView(
             children: [
+              TextFormField(
+                controller: _nameC,
+                decoration: const InputDecoration(labelText: 'Nama'),
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'Nama wajib diisi' : null,
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                initialValue: _role,
+                decoration: const InputDecoration(labelText: 'Daftar sebagai'),
+                items: const [
+                  DropdownMenuItem(value: 'seeker', child: Text('Pencari Kos')),
+                  DropdownMenuItem(value: 'owner', child: Text('Pemilik Kos')),
+                ],
+                onChanged: (v) => setState(() => _role = v ?? 'seeker'),
+              ),
+
               TextFormField(
                 controller: _emailC,
                 keyboardType: TextInputType.emailAddress,
