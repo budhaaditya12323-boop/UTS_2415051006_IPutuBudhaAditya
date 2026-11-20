@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'pages/home_page.dart';
+import 'services/auth_service.dart';
+import 'app_keys.dart';
+
 
 import 'pages/login_page.dart';
 
@@ -10,6 +14,17 @@ Future<void> main() async {
     url: 'https://kstiquuqgrlawkkplrlb.supabase.co',
     publishableKey: 'sb_publishable_dYKHIboi8sBmBwXT5i_wMQ_LvFftGs_',
   );
+  Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+  debugPrint('Auth event: ${data.event}');
+
+  if (data.event == AuthChangeEvent.signedOut) {
+    navigatorKey.currentState?.pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const LoginPage()),
+      (route) => false,
+    );
+  }
+});
+
 
   runApp(const KosFinderApp());
 }
@@ -22,7 +37,12 @@ class KosFinderApp extends StatelessWidget {
     return MaterialApp(
       title: 'KosFinder',
       theme: ThemeData(colorSchemeSeed: Colors.indigo, useMaterial3: true),
-      home: const LoginPage(),
+      navigatorKey: navigatorKey, // dari app_keys.dart (lihat di bawah)
+      scaffoldMessengerKey: messengerKey,
+      home: AuthService.instance.isLoggedIn
+          ? const HomePage() // Session Exists -> Home
+          : const LoginPage(), // No Session   -> Login
     );
+
   }
 }
