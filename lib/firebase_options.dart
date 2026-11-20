@@ -57,7 +57,6 @@ class DefaultFirebaseOptions {
     projectId: 'uts-mobile-2415051006-a80fd',
     storageBucket: 'uts-mobile-2415051006-a80fd.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBCGHio21f1vuvTBXB7_qahu6LgoN9oI8Q',
     appId: '1:925788479070:ios:0f76845daa40755126decf',
@@ -66,7 +65,6 @@ class DefaultFirebaseOptions {
     storageBucket: 'uts-mobile-2415051006-a80fd.firebasestorage.app',
     iosBundleId: 'com.example.recepiesIo',
   );
-
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyBCGHio21f1vuvTBXB7_qahu6LgoN9oI8Q',
     appId: '1:925788479070:ios:0f76845daa40755126decf',

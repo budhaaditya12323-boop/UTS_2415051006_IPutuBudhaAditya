@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'pages/home_page.dart';
@@ -6,13 +7,21 @@ import 'app_keys.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'pages/login_page.dart';
+import 'package:flutter/foundation.dart'; 
+import 'dart:io';
+import 'services/notification_service.dart'; // ← PASTIKAN BARIS INI ADA
 
 Future<void> main() async {
     WidgetsFlutterBinding.ensureInitialized();
 
+    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  } else {
+    debugPrint('Firebase tidak diinisialisasi karena berjalan di Desktop/Web.');
+  }
 
 
   await Supabase.initialize(

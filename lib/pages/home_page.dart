@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recepies_io/services/notification_service.dart';
 import 'kos_list_page.dart';
 import '../services/auth_service.dart';
 import '../services/profile_service.dart';
@@ -19,6 +20,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _profileFuture = ProfileService().getMyProfile();
+    // NotificationService.instance.requestPermission();
   }
 
   Future<void> _logout() async {
