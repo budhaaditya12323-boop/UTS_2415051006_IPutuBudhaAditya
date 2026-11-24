@@ -14,7 +14,7 @@ import 'services/notification_service.dart'; // ← PASTIKAN BARIS INI ADA
 Future<void> main() async {
     WidgetsFlutterBinding.ensureInitialized();
 
-    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+  if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );

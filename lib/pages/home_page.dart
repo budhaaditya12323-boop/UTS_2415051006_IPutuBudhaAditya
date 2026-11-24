@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _profileFuture = ProfileService().getMyProfile();
-    // NotificationService.instance.requestPermission();
+    NotificationService.instance.init();
   }
 
   Future<void> _logout() async {
